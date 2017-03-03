@@ -7,19 +7,19 @@ import android.widget.ImageView;
  * Created by shucc on 17/3/3.
  * cc@cchao.org
  */
-public class ImageLoader {
+public class LocalImageLoader {
 
-    private static ImageLoaderListener imageLoaderListener;
+    private static LocalImageLoaderListener imageLoaderListener;
 
-    public static void init(ImageLoaderListener listener) {
+    public static void init(LocalImageLoaderListener listener) {
         imageLoaderListener = listener;
     }
 
-    public static ImageLoaderListener getImageLoaderListener() {
+    public static LocalImageLoaderListener getImageLoaderListener() {
         return imageLoaderListener;
     }
 
-    public static interface ImageLoaderListener {
+    public static interface LocalImageLoaderListener {
         void load(Context context, ImageView imageView, String imageUrl);
     }
 }

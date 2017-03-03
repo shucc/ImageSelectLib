@@ -10,7 +10,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
-import org.cchao.localimageselectlib.ImageLoader;
+import org.cchao.localimageselectlib.LocalImageLoader;
 import org.cchao.localimageselectlib.LocalIPhotoSelectActivity;
 
 import java.io.File;
@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ImageLoader.init(new ImageLoader.ImageLoaderListener() {
+        LocalImageLoader.init(new LocalImageLoader.LocalImageLoaderListener() {
             @Override
             public void load(Context context, ImageView imageView, String imageUrl) {
                 Glide.with(context)

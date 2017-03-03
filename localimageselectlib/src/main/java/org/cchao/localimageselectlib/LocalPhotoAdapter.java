@@ -48,7 +48,7 @@ public class LocalPhotoAdapter extends RecyclerView.Adapter<LocalPhotoAdapter.Lo
             holder.imgSelect.setImageResource(R.drawable.ic_picture_unselected);
             holder.imgLocal.setColorFilter(null);
         }
-        ImageLoader.getImageLoaderListener().load(context, holder.imgLocal, imageItem.getImagePath());
+        LocalImageLoader.getImageLoaderListener().load(context, holder.imgLocal, imageItem.getImagePath());
         if (imageLocalItemOnclickListener != null) {
             holder.imgLocal.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -69,7 +69,7 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_local_image_select);
 
-        if (ImageLoader.getImageLoaderListener() == null) {
+        if (LocalImageLoader.getImageLoaderListener() == null) {
             finish();
             throw new NullPointerException("ImageLoader is null!");
         }

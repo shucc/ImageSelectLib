@@ -21,11 +21,13 @@
         compile "com.android.support:recyclerview-v7:latest.release.version"
         compile 'io.reactivex:rxandroid:latest.release.version'
         compile 'io.reactivex:rxjava:latest.release.version'
-        compile ('com.github.shucc:ImageSelectLib:v0.1') {
+        compile 'com.github.shucc:easypermissions:latest.release.version'
+        compile ('com.github.shucc:ImageSelectLib:v0.2') {
             exclude group: 'com.android.support', module: 'appcompat-v7'
             exclude group: 'com.android.support', module: 'recyclerview-v7'
             exclude group: 'io.reactivex', module: 'rxandroid'
             exclude group: 'io.reactivex', module: 'rxjava'
+            exclude group: 'com.github.shucc', module: 'easypermissions'
         }
     }
 ```
@@ -34,7 +36,7 @@
 
 初始化图片加载,推荐放在Application中:
 ```java
-    ImageLoader.init(new ImageLoader.ImageLoaderListener() {
+    ImageLoader.init(new LocalImageLoader.LocalImageLoaderListener() {
         @Override
         public void load(Context context, PhotoView photoView, String imageUrl) {
             Glide.with(context)
@@ -47,5 +49,5 @@
 ```
 打开图片选择界面:
 ```java
-    LocalIPhotoSelectActivity.launch(Activity activity, int maxSelectSize, int resultCode);
+    LocalPhotoSelectActivity.launch(Activity activity, int maxSelectSize, int resultCode);
 ```
