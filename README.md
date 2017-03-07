@@ -22,7 +22,7 @@
         compile 'io.reactivex:rxandroid:latest.release.version'
         compile 'io.reactivex:rxjava:latest.release.version'
         compile 'com.github.shucc:easypermissions:latest.release.version'
-        compile ('com.github.shucc:ImageSelectLib:v0.2') {
+        compile ('com.github.shucc:ImageSelectLib:v0.3') {
             exclude group: 'com.android.support', module: 'appcompat-v7'
             exclude group: 'com.android.support', module: 'recyclerview-v7'
             exclude group: 'io.reactivex', module: 'rxandroid'
@@ -50,4 +50,14 @@
 打开图片选择界面:
 ```java
     LocalPhotoSelectActivity.launch(Activity activity, int maxSelectSize, int resultCode);
+```
+接收选择的图片列表
+```java
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 设置的resultCode) {
+            List<String> images = (List<String>) data.getSerializableExtra(LocalIPhotoSelectActivity.KEY_LOCAL_IMAGE_SELECT);
+        }
+    }
 ```

@@ -1,4 +1,4 @@
-package org.cchao.localimageselectlib;
+package org.cchao.localimageselectlib.helper;
 
 /**
  * Created by chenchao on 16/12/12.

@@ -13,6 +13,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.cchao.localimageselectlib.helper.ImageItem;
+import org.cchao.localimageselectlib.helper.LocalImagesUri;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -145,6 +148,7 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
             GridLayoutManager gridLayouManager = new GridLayoutManager(LocalIPhotoSelectActivity.this, 3);
             gridLayouManager.setOrientation(GridLayoutManager.VERTICAL);
             recyclerView.setLayoutManager(gridLayouManager);
+            recyclerView.addItemDecoration(new ItemDecorationAlbumColumns(10, 3));
             imageAdapter = new LocalPhotoAdapter(imageLocal);
             recyclerView.setAdapter(imageAdapter);
             imageAdapter.setImageLocalItemOnclickListener(new LocalPhotoAdapter.ImageLocalItemOnclickListener() {

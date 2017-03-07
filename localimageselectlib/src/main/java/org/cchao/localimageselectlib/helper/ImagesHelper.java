@@ -1,9 +1,8 @@
-package org.cchao.localimageselectlib;
+package org.cchao.localimageselectlib.helper;
 
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
-import android.provider.MediaStore.Audio.Albums;
 import android.provider.MediaStore.Images.Media;
 import android.provider.MediaStore.Images.Thumbnails;
 

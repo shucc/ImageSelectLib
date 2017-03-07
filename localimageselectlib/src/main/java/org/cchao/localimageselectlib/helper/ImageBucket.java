@@ -1,4 +1,4 @@
-package org.cchao.localimageselectlib;
+package org.cchao.localimageselectlib.helper;
 
 import java.util.List;
 
