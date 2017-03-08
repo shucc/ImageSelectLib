@@ -11,6 +11,14 @@
         android:scaleType="centerCrop"/>
 
     <ImageView
+        android:id="@+id/img_camera"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:padding="16dp"
+        app:srcCompat="@drawable/ic_camera"/>
+
+    <ImageView
         android:id="@+id/img_select"
         android:layout_width="30dp"
         android:layout_height="30dp"

@@ -39,6 +39,13 @@ public class MainActivity extends AppCompatActivity {
                 LocalIPhotoSelectActivity.launch(MainActivity.this, 3, 300);
             }
         });
+
+        findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LocalIPhotoSelectActivity.launch(MainActivity.this, 3, 300, true);
+            }
+        });
     }
 
     @Override

@@ -23,10 +23,14 @@ public class LocalPhotoAdapter extends RecyclerView.Adapter<LocalPhotoAdapter.Lo
 
     private Context context;
 
+    //是否显示拍照
+    private boolean needShowCamera;
+
     private ImageLocalItemOnclickListener imageLocalItemOnclickListener;
 
-    public LocalPhotoAdapter(List<ImageItem> imageItems) {
+    public LocalPhotoAdapter(List<ImageItem> imageItems, boolean needShowCamera) {
         this.imageItems = imageItems;
+        this.needShowCamera = needShowCamera;
     }
 
     public void setImageLocalItemOnclickListener(ImageLocalItemOnclickListener imageLocalItemOnclickListener) {
@@ -42,20 +46,33 @@ public class LocalPhotoAdapter extends RecyclerView.Adapter<LocalPhotoAdapter.Lo
 
     @Override
     public void onBindViewHolder(LocalImageHolder holder, final int position) {
-        ImageItem imageItem = imageItems.get(position);
-        if (imageItem.isSelect()) {
-            holder.imgSelect.setImageResource(R.drawable.ic_picture_selected);
-            holder.imgLocal.setColorFilter(SELECED_COLOR_FILTER);
+        final ImageItem imageItem = imageItems.get(position);
+        if (null == imageItem) {
+            holder.imgLocal.setVisibility(View.GONE);
+            holder.imgSelect.setVisibility(View.GONE);
+            holder.imgCamera.setVisibility(View.VISIBLE);
         } else {
-            holder.imgSelect.setImageResource(R.drawable.ic_picture_unselected);
-            holder.imgLocal.setColorFilter(null);
+            holder.imgLocal.setVisibility(View.VISIBLE);
+            holder.imgSelect.setVisibility(View.VISIBLE);
+            holder.imgCamera.setVisibility(View.GONE);
+            if (imageItem.isSelect()) {
+                holder.imgSelect.setImageResource(R.drawable.ic_picture_selected);
+                holder.imgLocal.setColorFilter(SELECED_COLOR_FILTER);
+            } else {
+                holder.imgSelect.setImageResource(R.drawable.ic_picture_unselected);
+                holder.imgLocal.setColorFilter(null);
+            }
+            LocalImageLoader.getImageLoaderListener().load(context, holder.imgLocal, imageItem.getImagePath());
         }
-        LocalImageLoader.getImageLoaderListener().load(context, holder.imgLocal, imageItem.getImagePath());
         if (imageLocalItemOnclickListener != null) {
-            holder.imgLocal.setOnClickListener(new View.OnClickListener() {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
-                    imageLocalItemOnclickListener.onItemClick(view, position);
+                public void onClick(View v) {
+                    if (null == imageItem) {
+                        imageLocalItemOnclickListener.onItemCameraClick();
+                    } else {
+                        imageLocalItemOnclickListener.onItemClick(v, position);
+                    }
                 }
             });
         }
@@ -75,14 +92,19 @@ public class LocalPhotoAdapter extends RecyclerView.Adapter<LocalPhotoAdapter.Lo
 
         ImageView imgSelect;
 
+        ImageView imgCamera;
+
         public LocalImageHolder(View itemView) {
             super(itemView);
             imgLocal = (ImageView) itemView.findViewById(R.id.img_local);
             imgSelect = (ImageView) itemView.findViewById(R.id.img_select);
+            imgCamera = (ImageView) itemView.findViewById(R.id.img_camera);
         }
     }
 
     public static interface ImageLocalItemOnclickListener {
         void onItemClick(View view, int position);
+
+        void onItemCameraClick();
     }
 }

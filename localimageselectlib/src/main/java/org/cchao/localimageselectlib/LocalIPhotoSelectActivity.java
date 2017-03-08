@@ -9,9 +9,11 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.cchao.localimageselectlib.helper.ImageItem;
 import org.cchao.localimageselectlib.helper.LocalImagesUri;
@@ -35,12 +37,15 @@ import rx.schedulers.Schedulers;
  */
 public class LocalIPhotoSelectActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
+    private final String TAG = getClass().getName();
+
     public static final String KEY_LOCAL_IMAGE_SELECT = "key_local_image_select";
 
     private static final int RC_LOCAL_IMAGE_PERM = 100;
 
     private static final String KEY_IMAGE_MAX_SIZE = "key_image_max_size";
     private static final String KEY_RESULT_CODE = "key_result_code";
+    private static final String KEY_NEED_CAMERA = "keed_need_camera";
 
     private RecyclerView recyclerView;
     private Button btnComplete;
@@ -55,6 +60,9 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
     //可以选择的图片数目
     private int selectMaxSize = 9;
 
+    //是否显示拍照
+    private boolean needShowCamera = false;
+
     //当前已选中图片数目
     private int selectCount = 0;
 
@@ -62,6 +70,14 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
 
     public static void launch(Activity activity, int maxSize, int resultCode) {
         Intent starter = new Intent(activity, LocalIPhotoSelectActivity.class);
+        starter.putExtra(KEY_IMAGE_MAX_SIZE, maxSize);
+        starter.putExtra(KEY_RESULT_CODE, resultCode);
+        activity.startActivityForResult(starter, 300);
+    }
+
+    public static void launch(Activity activity, int maxSize, int resultCode, boolean needCamera) {
+        Intent starter = new Intent(activity, LocalIPhotoSelectActivity.class);
+        starter.putExtra(KEY_NEED_CAMERA, needCamera);
         starter.putExtra(KEY_IMAGE_MAX_SIZE, maxSize);
         starter.putExtra(KEY_RESULT_CODE, resultCode);
         activity.startActivityForResult(starter, 300);
@@ -88,6 +104,7 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
 
     private void initData() {
         selectMaxSize = getIntent().getIntExtra(KEY_IMAGE_MAX_SIZE, 0);
+        needShowCamera = getIntent().getBooleanExtra(KEY_NEED_CAMERA, false);
         resultCode = getIntent().getIntExtra(KEY_RESULT_CODE, 100);
         imageLocal = new ArrayList<>();
 
@@ -122,7 +139,10 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
             Observable.create(new Observable.OnSubscribe<List<ImageItem>>() {
                 @Override
                 public void call(Subscriber<? super List<ImageItem>> subscriber) {
-                    imageLocal = LocalImagesUri.getLocalImagesUri(LocalIPhotoSelectActivity.this);
+                    if (needShowCamera) {
+                        imageLocal.add(null);
+                    }
+                    imageLocal.addAll(LocalImagesUri.getLocalImagesUri(LocalIPhotoSelectActivity.this));
                     subscriber.onNext(imageLocal);
                     subscriber.onCompleted();
                 }
@@ -149,7 +169,7 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
             gridLayouManager.setOrientation(GridLayoutManager.VERTICAL);
             recyclerView.setLayoutManager(gridLayouManager);
             recyclerView.addItemDecoration(new ItemDecorationAlbumColumns(10, 3));
-            imageAdapter = new LocalPhotoAdapter(imageLocal);
+            imageAdapter = new LocalPhotoAdapter(imageLocal, needShowCamera);
             recyclerView.setAdapter(imageAdapter);
             imageAdapter.setImageLocalItemOnclickListener(new LocalPhotoAdapter.ImageLocalItemOnclickListener() {
                 @Override
@@ -167,6 +187,11 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
                     imageLocal.set(position, imageItem);
                     imageAdapter.notifyItemChanged(position);
                     textNumber.setText(String.valueOf(selectCount));
+                }
+
+                @Override
+                public void onItemCameraClick() {
+                    Toast.makeText(LocalIPhotoSelectActivity.this, "拍照", Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
