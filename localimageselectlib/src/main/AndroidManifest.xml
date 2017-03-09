@@ -10,7 +10,7 @@
         android:supportsRtl="true">
 
         <activity
-            android:name=".LocalIPhotoSelectActivity"
+            android:name=".PhotoSelectActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
 
     </application>

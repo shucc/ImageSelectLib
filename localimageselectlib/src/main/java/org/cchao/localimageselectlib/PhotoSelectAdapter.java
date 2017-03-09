@@ -15,7 +15,7 @@ import java.util.List;
  * Created by shucc on 17/3/3.
  * cc@cchao.org
  */
-public class LocalPhotoAdapter extends RecyclerView.Adapter<LocalPhotoAdapter.LocalImageHolder> {
+public class PhotoSelectAdapter extends RecyclerView.Adapter<PhotoSelectAdapter.LocalImageHolder> {
 
     private final int SELECED_COLOR_FILTER = 0x77000000;
 
@@ -28,7 +28,7 @@ public class LocalPhotoAdapter extends RecyclerView.Adapter<LocalPhotoAdapter.Lo
 
     private ImageLocalItemOnclickListener imageLocalItemOnclickListener;
 
-    public LocalPhotoAdapter(List<ImageItem> imageItems, boolean needShowCamera) {
+    public PhotoSelectAdapter(List<ImageItem> imageItems, boolean needShowCamera) {
         this.imageItems = imageItems;
         this.needShowCamera = needShowCamera;
     }
@@ -56,13 +56,13 @@ public class LocalPhotoAdapter extends RecyclerView.Adapter<LocalPhotoAdapter.Lo
             holder.imgSelect.setVisibility(View.VISIBLE);
             holder.imgCamera.setVisibility(View.GONE);
             if (imageItem.isSelect()) {
-                holder.imgSelect.setImageResource(R.drawable.ic_picture_selected);
+                holder.imgSelect.setImageResource(R.drawable.ic_photo_select_selected);
                 holder.imgLocal.setColorFilter(SELECED_COLOR_FILTER);
             } else {
-                holder.imgSelect.setImageResource(R.drawable.ic_picture_unselected);
+                holder.imgSelect.setImageResource(R.drawable.ic_photo_select_unselected);
                 holder.imgLocal.setColorFilter(null);
             }
-            LocalImageLoader.getImageLoaderListener().load(context, holder.imgLocal, imageItem.getImagePath());
+            PhotoSelectLoader.getImageLoaderListener().load(context, holder.imgLocal, imageItem.getImagePath());
         }
         if (imageLocalItemOnclickListener != null) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {

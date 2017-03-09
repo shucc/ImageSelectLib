@@ -8,6 +8,7 @@
         android:id="@+id/img_local"
         android:layout_width="match_parent"
         android:layout_height="100dp"
+        app:srcCompat="@drawable/ic_photo_select_placeholder"
         android:scaleType="centerCrop"/>
 
     <ImageView
@@ -16,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:padding="16dp"
-        app:srcCompat="@drawable/ic_camera"/>
+        app:srcCompat="@drawable/ic_photo_select_camera"/>
 
     <ImageView
         android:id="@+id/img_select"
@@ -24,6 +25,6 @@
         android:layout_height="30dp"
         android:layout_alignParentRight="true"
         android:layout_margin="4dp"
-        app:srcCompat="@drawable/ic_picture_selected"/>
+        app:srcCompat="@drawable/ic_photo_select_selected"/>
 
 </RelativeLayout>

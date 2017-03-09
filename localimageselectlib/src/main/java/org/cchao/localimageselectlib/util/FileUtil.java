@@ -3,7 +3,7 @@ package org.cchao.localimageselectlib.util;
 import android.content.Context;
 import android.os.Environment;
 
-import org.cchao.localimageselectlib.LocalImageLoader;
+import org.cchao.localimageselectlib.PhotoSelectLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +24,7 @@ public class FileUtil {
         try {
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                 storagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath();
-                storageDir = new File(storagePath + File.separator + LocalImageLoader.getImageFolderName());
+                storageDir = new File(storagePath + File.separator + PhotoSelectLoader.getImageFolderName());
             } else {
                 storagePath = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath();
                 storageDir = new File(storagePath);

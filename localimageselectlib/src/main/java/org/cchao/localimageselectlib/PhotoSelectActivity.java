@@ -40,7 +40,7 @@ import rx.schedulers.Schedulers;
  * Created by shucc on 17/3/3.
  * cc@cchao.org
  */
-public class LocalIPhotoSelectActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
+public class PhotoSelectActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
     private final String TAG = getClass().getName();
 
@@ -66,7 +66,7 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
 
     private List<ImageItem> imageLocal;
 
-    private LocalPhotoAdapter imageAdapter;
+    private PhotoSelectAdapter imageAdapter;
 
     //可以选择的图片数目
     private int selectMaxSize = 9;
@@ -82,14 +82,14 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
     private File cameraFile;
 
     public static void launch(Activity activity, int maxSize, int resultCode) {
-        Intent starter = new Intent(activity, LocalIPhotoSelectActivity.class);
+        Intent starter = new Intent(activity, PhotoSelectActivity.class);
         starter.putExtra(KEY_IMAGE_MAX_SIZE, maxSize);
         starter.putExtra(KEY_RESULT_CODE, resultCode);
         activity.startActivityForResult(starter, 300);
     }
 
     public static void launch(Activity activity, int maxSize, int resultCode, boolean needCamera) {
-        Intent starter = new Intent(activity, LocalIPhotoSelectActivity.class);
+        Intent starter = new Intent(activity, PhotoSelectActivity.class);
         starter.putExtra(KEY_NEED_CAMERA, needCamera);
         starter.putExtra(KEY_IMAGE_MAX_SIZE, maxSize);
         starter.putExtra(KEY_RESULT_CODE, resultCode);
@@ -101,7 +101,7 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_local_image_select);
 
-        if (LocalImageLoader.getImageLoaderListener() == null) {
+        if (PhotoSelectLoader.getImageLoaderListener() == null) {
             finish();
             throw new NullPointerException("ImageLoader is null!");
         }
@@ -145,7 +145,7 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
                     if (needShowCamera) {
                         imageLocal.add(null);
                     }
-                    imageLocal.addAll(LocalImagesUri.getLocalImagesUri(LocalIPhotoSelectActivity.this));
+                    imageLocal.addAll(LocalImagesUri.getLocalImagesUri(PhotoSelectActivity.this));
                     subscriber.onNext(imageLocal);
                     subscriber.onCompleted();
                 }
@@ -168,13 +168,13 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
 
     private void showData() {
         if (imageAdapter == null) {
-            GridLayoutManager gridLayouManager = new GridLayoutManager(LocalIPhotoSelectActivity.this, 3);
+            GridLayoutManager gridLayouManager = new GridLayoutManager(PhotoSelectActivity.this, 3);
             gridLayouManager.setOrientation(GridLayoutManager.VERTICAL);
             recyclerView.setLayoutManager(gridLayouManager);
             recyclerView.addItemDecoration(new ItemDecorationAlbumColumns(10, 3));
-            imageAdapter = new LocalPhotoAdapter(imageLocal, needShowCamera);
+            imageAdapter = new PhotoSelectAdapter(imageLocal, needShowCamera);
             recyclerView.setAdapter(imageAdapter);
-            imageAdapter.setImageLocalItemOnclickListener(new LocalPhotoAdapter.ImageLocalItemOnclickListener() {
+            imageAdapter.setImageLocalItemOnclickListener(new PhotoSelectAdapter.ImageLocalItemOnclickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
                     ImageItem imageItem = imageLocal.get(position);
@@ -182,7 +182,7 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
                         selectCount--;
                     } else {
                         if (selectCount >= selectMaxSize) {
-                            Toast.makeText(LocalIPhotoSelectActivity.this, String.format(getString(R.string.activity_local_image_select_image_enough)
+                            Toast.makeText(PhotoSelectActivity.this, String.format(getString(R.string.activity_local_image_select_image_enough)
                                     , selectMaxSize), Toast.LENGTH_SHORT).show();
                             return;
                         }
@@ -197,7 +197,7 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
                 @Override
                 public void onItemCameraClick() {
                     if (selectCount >= selectMaxSize) {
-                        Toast.makeText(LocalIPhotoSelectActivity.this, String.format(getString(R.string.activity_local_image_select_image_enough)
+                        Toast.makeText(PhotoSelectActivity.this, String.format(getString(R.string.activity_local_image_select_image_enough)
                                 , selectMaxSize), Toast.LENGTH_SHORT).show();
                         return;
                     } else {
@@ -217,7 +217,7 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
             if (cameraFile != null) {
                 Uri uri = null;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    uri = FileProvider.getUriForFile(this, LocalImageLoader.getFileProviderName(), cameraFile);
+                    uri = FileProvider.getUriForFile(this, PhotoSelectLoader.getFileProviderName(), cameraFile);
                     intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 } else {

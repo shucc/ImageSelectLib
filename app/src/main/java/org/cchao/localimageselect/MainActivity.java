@@ -10,8 +10,8 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
-import org.cchao.localimageselectlib.LocalImageLoader;
-import org.cchao.localimageselectlib.LocalIPhotoSelectActivity;
+import org.cchao.localimageselectlib.PhotoSelectLoader;
+import org.cchao.localimageselectlib.PhotoSelectActivity;
 
 import java.io.File;
 import java.util.List;
@@ -26,12 +26,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        LocalImageLoader.init(new LocalImageLoader.LocalImageLoaderListener() {
+        PhotoSelectLoader.init(new PhotoSelectLoader.LocalImageLoaderListener() {
             @Override
             public void load(Context context, ImageView imageView, String imageUrl) {
                 Glide.with(context)
                         .load(new File(imageUrl))
-                        .placeholder(R.mipmap.ic_launcher)
                         .into(imageView);
             }
         }, fileProviderName, imageFolderName);
@@ -39,14 +38,14 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LocalIPhotoSelectActivity.launch(MainActivity.this, 3, 300);
+                PhotoSelectActivity.launch(MainActivity.this, 3, 300);
             }
         });
 
         findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LocalIPhotoSelectActivity.launch(MainActivity.this, 3, 300, true);
+                PhotoSelectActivity.launch(MainActivity.this, 4, 300, true);
             }
         });
     }
@@ -55,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == 300) {
-            List<String> images = (List<String>) data.getSerializableExtra(LocalIPhotoSelectActivity.KEY_LOCAL_IMAGE_SELECT);
+            List<String> images = (List<String>) data.getSerializableExtra(PhotoSelectActivity.KEY_LOCAL_IMAGE_SELECT);
             if (null != images && images.size() > 0) {
                 for (int i = 0; i < images.size(); i++) {
                     Log.d("MainActivity", images.get(i));

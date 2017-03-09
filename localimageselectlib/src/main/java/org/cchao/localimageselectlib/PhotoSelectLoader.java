@@ -8,7 +8,7 @@ import android.widget.ImageView;
  * Created by shucc on 17/3/3.
  * cc@cchao.org
  */
-public class LocalImageLoader {
+public class PhotoSelectLoader {
 
     private static LocalImageLoaderListener imageLoaderListener;
 
