@@ -18,6 +18,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final String fileProviderName = "org.cchao.localimageselect.fileProvider";
+    private final String imageFolderName = "ceshi";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
                         .placeholder(R.mipmap.ic_launcher)
                         .into(imageView);
             }
-        });
+        }, fileProviderName, imageFolderName);
 
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("MainActivity", "onActivityResult: " + requestCode + "-->" + resultCode);
         if (resultCode == 300) {
             List<String> images = (List<String>) data.getSerializableExtra(LocalIPhotoSelectActivity.KEY_LOCAL_IMAGE_SELECT);
             if (null != images && images.size() > 0) {

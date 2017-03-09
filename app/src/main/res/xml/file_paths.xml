@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <external-path
+        name="ceshi_public_img"
+        path="DCIM/ceshi" />
+    <cache-path
+        name="ceshi_private_img"
+        path="images" />
+</paths>

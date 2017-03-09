@@ -3,13 +3,16 @@ package org.cchao.localimageselectlib;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -17,7 +20,9 @@ import android.widget.Toast;
 
 import org.cchao.localimageselectlib.helper.ImageItem;
 import org.cchao.localimageselectlib.helper.LocalImagesUri;
+import org.cchao.localimageselectlib.util.FileUtil;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,10 +47,16 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
     public static final String KEY_LOCAL_IMAGE_SELECT = "key_local_image_select";
 
     private static final int RC_LOCAL_IMAGE_PERM = 100;
+    private final int TAKE_PHOTO = 200;
 
     private static final String KEY_IMAGE_MAX_SIZE = "key_image_max_size";
     private static final String KEY_RESULT_CODE = "key_result_code";
     private static final String KEY_NEED_CAMERA = "keed_need_camera";
+
+    private final String[] permissions = {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+    };
 
     private RecyclerView recyclerView;
     private Button btnComplete;
@@ -66,7 +77,9 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
     //当前已选中图片数目
     private int selectCount = 0;
 
-    private int resultCode;
+    private int imageResultCode;
+
+    private File cameraFile;
 
     public static void launch(Activity activity, int maxSize, int resultCode) {
         Intent starter = new Intent(activity, LocalIPhotoSelectActivity.class);
@@ -105,7 +118,7 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
     private void initData() {
         selectMaxSize = getIntent().getIntExtra(KEY_IMAGE_MAX_SIZE, 0);
         needShowCamera = getIntent().getBooleanExtra(KEY_NEED_CAMERA, false);
-        resultCode = getIntent().getIntExtra(KEY_RESULT_CODE, 100);
+        imageResultCode = getIntent().getIntExtra(KEY_RESULT_CODE, 100);
         imageLocal = new ArrayList<>();
 
         textDefault.setText("/".concat(String.valueOf(selectMaxSize).concat("张")));
@@ -114,17 +127,7 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
         btnComplete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                List<String> images = new ArrayList<String>();
-                for (int i = 0; i < imageLocal.size(); i++) {
-                    ImageItem imageItem = imageLocal.get(i);
-                    if (imageItem.isSelect()) {
-                        images.add(imageItem.getImagePath());
-                    }
-                }
-                Intent intent = new Intent();
-                intent.putExtra(KEY_LOCAL_IMAGE_SELECT, (Serializable) images);
-                setResult(resultCode, intent);
-                finish();
+            selectConfirm();
             }
         });
 
@@ -133,8 +136,8 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
 
     @AfterPermissionGranted(RC_LOCAL_IMAGE_PERM)
     public void showLocalImages() {
-        if (!EasyPermissions.hasPermissions(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            EasyPermissions.requestPermissions(this, RC_LOCAL_IMAGE_PERM, Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (!EasyPermissions.hasPermissions(this, permissions)) {
+            EasyPermissions.requestPermissions(this, RC_LOCAL_IMAGE_PERM, permissions);
         } else {
             Observable.create(new Observable.OnSubscribe<List<ImageItem>>() {
                 @Override
@@ -179,6 +182,8 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
                         selectCount--;
                     } else {
                         if (selectCount >= selectMaxSize) {
+                            Toast.makeText(LocalIPhotoSelectActivity.this, String.format(getString(R.string.activity_local_image_select_image_enough)
+                                    , selectMaxSize), Toast.LENGTH_SHORT).show();
                             return;
                         }
                         selectCount++;
@@ -191,12 +196,57 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
 
                 @Override
                 public void onItemCameraClick() {
-                    Toast.makeText(LocalIPhotoSelectActivity.this, "拍照", Toast.LENGTH_SHORT).show();
+                    if (selectCount >= selectMaxSize) {
+                        Toast.makeText(LocalIPhotoSelectActivity.this, String.format(getString(R.string.activity_local_image_select_image_enough)
+                                , selectMaxSize), Toast.LENGTH_SHORT).show();
+                        return;
+                    } else {
+                        openCamera();
+                    }
                 }
             });
         } else {
             imageAdapter.notifyDataSetChanged();
         }
+    }
+
+    private void openCamera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            cameraFile = FileUtil.createTempFile(this);
+            if (cameraFile != null) {
+                Uri uri = null;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    uri = FileProvider.getUriForFile(this, LocalImageLoader.getFileProviderName(), cameraFile);
+                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                } else {
+                    uri = Uri.fromFile(cameraFile);
+                }
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                startActivityForResult(intent, TAKE_PHOTO);
+            }
+        }
+    }
+
+    /**
+     * 选取成功确认
+     */
+    private void selectConfirm() {
+        List<String> images = new ArrayList<String>();
+        for (int i = 0; i < imageLocal.size(); i++) {
+            ImageItem imageItem = imageLocal.get(i);
+            if (null != imageItem && imageItem.isSelect()) {
+                images.add(imageItem.getImagePath());
+            }
+        }
+        if (needShowCamera && null != cameraFile) {
+            images.add(cameraFile.getPath());
+        }
+        Intent intent = new Intent();
+        intent.putExtra(KEY_LOCAL_IMAGE_SELECT, (Serializable) images);
+        setResult(imageResultCode, intent);
+        finish();
     }
 
     @Override
@@ -214,6 +264,7 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
     public void onPermissionsDenied(int i, List<String> list) {
         new AppSettingsDialog.Builder(this)
                 .setRequestCode(RC_LOCAL_IMAGE_PERM)
+                .setRationale(R.string.activity_local_image_select_perm)
                 .build()
                 .show();
     }
@@ -227,6 +278,9 @@ public class LocalIPhotoSelectActivity extends AppCompatActivity implements Easy
             } else {
                 finish();
             }
+        }
+        if (requestCode == TAKE_PHOTO && resultCode == RESULT_OK) {
+            selectConfirm();
         }
     }
 }
