@@ -23,14 +23,10 @@ public class PhotoSelectAdapter extends RecyclerView.Adapter<PhotoSelectAdapter.
 
     private Context context;
 
-    //是否显示拍照
-    private boolean needShowCamera;
-
     private ImageLocalItemOnclickListener imageLocalItemOnclickListener;
 
-    public PhotoSelectAdapter(List<ImageItem> imageItems, boolean needShowCamera) {
+    public PhotoSelectAdapter(List<ImageItem> imageItems) {
         this.imageItems = imageItems;
-        this.needShowCamera = needShowCamera;
     }
 
     public void setImageLocalItemOnclickListener(ImageLocalItemOnclickListener imageLocalItemOnclickListener) {
@@ -65,14 +61,11 @@ public class PhotoSelectAdapter extends RecyclerView.Adapter<PhotoSelectAdapter.
             PhotoSelectLoader.getImageLoaderListener().load(context, holder.imgLocal, imageItem.getImagePath());
         }
         if (imageLocalItemOnclickListener != null) {
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (null == imageItem) {
-                        imageLocalItemOnclickListener.onItemCameraClick();
-                    } else {
-                        imageLocalItemOnclickListener.onItemClick(v, position);
-                    }
+            holder.itemView.setOnClickListener((v) -> {
+                if (null == imageItem) {
+                    imageLocalItemOnclickListener.onItemCameraClick();
+                } else {
+                    imageLocalItemOnclickListener.onItemClick(v, position);
                 }
             });
         }
@@ -102,7 +95,7 @@ public class PhotoSelectAdapter extends RecyclerView.Adapter<PhotoSelectAdapter.
         }
     }
 
-    public static interface ImageLocalItemOnclickListener {
+    public interface ImageLocalItemOnclickListener {
         void onItemClick(View view, int position);
 
         void onItemCameraClick();

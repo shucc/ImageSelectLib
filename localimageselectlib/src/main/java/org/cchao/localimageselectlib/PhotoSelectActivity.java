@@ -13,6 +13,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -124,12 +125,7 @@ public class PhotoSelectActivity extends AppCompatActivity implements EasyPermis
         textDefault.setText("/".concat(String.valueOf(selectMaxSize).concat("张")));
         textNumber.setText(String.valueOf(selectCount));
 
-        btnComplete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            selectConfirm();
-            }
-        });
+        btnComplete.setOnClickListener((v) -> selectConfirm());
 
         showLocalImages();
     }
@@ -139,30 +135,19 @@ public class PhotoSelectActivity extends AppCompatActivity implements EasyPermis
         if (!EasyPermissions.hasPermissions(this, permissions)) {
             EasyPermissions.requestPermissions(this, RC_LOCAL_IMAGE_PERM, permissions);
         } else {
-            Observable.create(new Observable.OnSubscribe<List<ImageItem>>() {
-                @Override
-                public void call(Subscriber<? super List<ImageItem>> subscriber) {
-                    if (needShowCamera) {
-                        imageLocal.add(null);
-                    }
-                    imageLocal.addAll(LocalImagesUri.getLocalImagesUri(PhotoSelectActivity.this));
-                    subscriber.onNext(imageLocal);
-                    subscriber.onCompleted();
+            Observable.create((Subscriber<? super List<ImageItem>> subscriber) -> {
+                if (needShowCamera) {
+                    imageLocal.add(null);
                 }
+                imageLocal.addAll(LocalImagesUri.getLocalImagesUri(PhotoSelectActivity.this));
+                subscriber.onNext(imageLocal);
+                subscriber.onCompleted();
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Action1<List<ImageItem>>() {
-                        @Override
-                        public void call(List<ImageItem> imageItems) {
-                            textMaxSize.setText(String.format(getResources().getString(R.string.activity_local_image_select_local_max_size), imageItems.size()));
-                            showData();
-                        }
-                    }, new Action1<Throwable>() {
-                        @Override
-                        public void call(Throwable throwable) {
-
-                        }
-                    });
+                    .subscribe(imageItems -> {
+                        textMaxSize.setText(String.format(getResources().getString(R.string.activity_local_image_select_local_max_size), imageItems.size()));
+                        showData();
+                    }, throwable -> Log.d(TAG, throwable.getMessage()));
         }
     }
 
@@ -172,7 +157,7 @@ public class PhotoSelectActivity extends AppCompatActivity implements EasyPermis
             gridLayouManager.setOrientation(GridLayoutManager.VERTICAL);
             recyclerView.setLayoutManager(gridLayouManager);
             recyclerView.addItemDecoration(new ItemDecorationAlbumColumns(10, 3));
-            imageAdapter = new PhotoSelectAdapter(imageLocal, needShowCamera);
+            imageAdapter = new PhotoSelectAdapter(imageLocal);
             recyclerView.setAdapter(imageAdapter);
             imageAdapter.setImageLocalItemOnclickListener(new PhotoSelectAdapter.ImageLocalItemOnclickListener() {
                 @Override

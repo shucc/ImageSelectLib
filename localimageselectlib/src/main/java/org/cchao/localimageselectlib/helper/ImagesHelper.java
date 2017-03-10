@@ -23,7 +23,6 @@ public class ImagesHelper {
 
     private Map<String, String> thumbnailList = new HashMap<String, String>();
 
-    private List<HashMap<String, String>> albumList = new ArrayList<HashMap<String, String>>();
     private Map<String, ImageBucket> bucketList = new HashMap<String, ImageBucket>();
 
     private boolean hasBuildImagesBucketList = false;
@@ -63,8 +62,7 @@ public class ImagesHelper {
         }
     }
 
-    void buildImagesBucketList() {
-        long startTime = System.currentTimeMillis();
+    private void buildImagesBucketList() {
         getThumbnail();
         String columns[] = new String[] { Media._ID, Media.BUCKET_ID,
                 Media.PICASA_ID, Media.DATA, Media.DISPLAY_NAME, Media.TITLE,
@@ -97,7 +95,7 @@ public class ImagesHelper {
                 if (bucket == null) {
                     bucket = new ImageBucket();
                     bucketList.put(bucketId, bucket);
-                    bucket.imageList = new ArrayList<ImageItem>();
+                    bucket.imageList = new ArrayList<>();
                     bucket.bucketName = bucketName;
                 }
                 bucket.count++;
@@ -109,19 +107,7 @@ public class ImagesHelper {
 
             } while (cur.moveToNext());
         }
-
-        Iterator<Map.Entry<String, ImageBucket>> itr = bucketList.entrySet()
-                .iterator();
-        while (itr.hasNext()) {
-            Map.Entry<String, ImageBucket> entry = (Map.Entry<String, ImageBucket>) itr
-                    .next();
-            ImageBucket bucket = entry.getValue();
-            for (int i = 0; i < bucket.imageList.size(); ++i) {
-                ImageItem image = bucket.imageList.get(i);
-            }
-        }
         hasBuildImagesBucketList = true;
-        long endTime = System.currentTimeMillis();
     }
 
 
@@ -134,8 +120,7 @@ public class ImagesHelper {
         Iterator<Map.Entry<String, ImageBucket>> itr = bucketList.entrySet()
                 .iterator();
         while (itr.hasNext()) {
-            Map.Entry<String, ImageBucket> entry = (Map.Entry<String, ImageBucket>) itr
-                    .next();
+            Map.Entry<String, ImageBucket> entry = itr.next();
             tmpList.add(entry.getValue());
         }
         return tmpList;

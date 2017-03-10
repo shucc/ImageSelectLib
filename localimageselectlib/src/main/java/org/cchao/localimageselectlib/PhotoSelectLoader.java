@@ -35,7 +35,7 @@ public class PhotoSelectLoader {
         return imageFolderName;
     }
 
-    public static interface LocalImageLoaderListener {
+    public interface LocalImageLoaderListener {
         void load(Context context, ImageView imageView, String imageUrl);
     }
 }
