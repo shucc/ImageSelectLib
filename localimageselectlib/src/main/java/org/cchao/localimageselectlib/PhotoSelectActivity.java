@@ -1,19 +1,17 @@
 package org.cchao.localimageselectlib;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -28,20 +26,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.AppSettingsDialog;
-import pub.devrel.easypermissions.EasyPermissions;
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
-
 /**
  * Created by shucc on 17/3/3.
  * cc@cchao.org
  */
-public class PhotoSelectActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
+public class PhotoSelectActivity extends AppCompatActivity {
 
     private final String TAG = getClass().getName();
 
@@ -53,11 +42,6 @@ public class PhotoSelectActivity extends AppCompatActivity implements EasyPermis
     private static final String KEY_IMAGE_MAX_SIZE = "key_image_max_size";
     private static final String KEY_RESULT_CODE = "key_result_code";
     private static final String KEY_NEED_CAMERA = "keed_need_camera";
-
-    private final String[] permissions = {
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-    };
 
     private RecyclerView recyclerView;
     private Button btnComplete;
@@ -81,6 +65,8 @@ public class PhotoSelectActivity extends AppCompatActivity implements EasyPermis
     private int imageResultCode;
 
     private File cameraFile;
+
+    private FindLocalPhotosTask findLocalPhotosTask;
 
     public static void launch(Activity activity, int maxSize, int resultCode) {
         Intent starter = new Intent(activity, PhotoSelectActivity.class);
@@ -125,30 +111,19 @@ public class PhotoSelectActivity extends AppCompatActivity implements EasyPermis
         textDefault.setText("/".concat(String.valueOf(selectMaxSize).concat("张")));
         textNumber.setText(String.valueOf(selectCount));
 
-        btnComplete.setOnClickListener((v) -> selectConfirm());
+        btnComplete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectConfirm();
+            }
+        });
 
         showLocalImages();
     }
 
-    @AfterPermissionGranted(RC_LOCAL_IMAGE_PERM)
     public void showLocalImages() {
-        if (!EasyPermissions.hasPermissions(this, permissions)) {
-            EasyPermissions.requestPermissions(this, RC_LOCAL_IMAGE_PERM, permissions);
-        } else {
-            Observable.create((Subscriber<? super List<ImageItem>> subscriber) -> {
-                if (needShowCamera) {
-                    imageLocal.add(null);
-                }
-                imageLocal.addAll(LocalImagesUri.getLocalImagesUri(PhotoSelectActivity.this));
-                subscriber.onNext(imageLocal);
-                subscriber.onCompleted();
-            }).subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(imageItems -> {
-                        textMaxSize.setText(String.format(getResources().getString(R.string.activity_local_image_select_local_max_size), imageItems.size()));
-                        showData();
-                    }, throwable -> Log.d(TAG, throwable.getMessage()));
-        }
+        findLocalPhotosTask = new FindLocalPhotosTask();
+        findLocalPhotosTask.execute(needShowCamera);
     }
 
     private void showData() {
@@ -235,26 +210,6 @@ public class PhotoSelectActivity extends AppCompatActivity implements EasyPermis
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-
-    @Override
-    public void onPermissionsGranted(int i, List<String> list) {
-
-    }
-
-    @Override
-    public void onPermissionsDenied(int i, List<String> list) {
-        new AppSettingsDialog.Builder(this)
-                .setRequestCode(RC_LOCAL_IMAGE_PERM)
-                .setRationale(R.string.activity_local_image_select_perm)
-                .build()
-                .show();
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_LOCAL_IMAGE_PERM) {
@@ -266,6 +221,32 @@ public class PhotoSelectActivity extends AppCompatActivity implements EasyPermis
         }
         if (requestCode == TAKE_PHOTO && resultCode == RESULT_OK) {
             selectConfirm();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (findLocalPhotosTask != null && !findLocalPhotosTask.isCancelled()) {
+            findLocalPhotosTask.cancel(true);
+        }
+    }
+
+    private class FindLocalPhotosTask extends AsyncTask<Boolean, Integer, List<ImageItem>> {
+
+        @Override
+        protected void onPostExecute(List<ImageItem> imageItems) {
+            textMaxSize.setText(String.format(getResources().getString(R.string.activity_local_image_select_local_max_size), imageItems.size()));
+            showData();
+        }
+
+        @Override
+        protected List<ImageItem> doInBackground(Boolean... needCamera) {
+            if (needShowCamera) {
+                imageLocal.add(null);
+            }
+            imageLocal.addAll(LocalImagesUri.getLocalImagesUri(PhotoSelectActivity.this));
+            return imageLocal;
         }
     }
 }

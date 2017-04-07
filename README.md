@@ -19,15 +19,9 @@
     dependencies {
         compile "com.android.support:appcompat-v7:latest.release.version"
         compile "com.android.support:recyclerview-v7:latest.release.version"
-        compile 'io.reactivex:rxandroid:latest.release.version'
-        compile 'io.reactivex:rxjava:latest.release.version'
-        compile 'com.github.shucc:easypermissions:latest.release.version'
         compile ('com.github.shucc:ImageSelectLib:v0.3') {
             exclude group: 'com.android.support', module: 'appcompat-v7'
             exclude group: 'com.android.support', module: 'recyclerview-v7'
-            exclude group: 'io.reactivex', module: 'rxandroid'
-            exclude group: 'io.reactivex', module: 'rxjava'
-            exclude group: 'com.github.shucc', module: 'easypermissions'
         }
     }
 ```

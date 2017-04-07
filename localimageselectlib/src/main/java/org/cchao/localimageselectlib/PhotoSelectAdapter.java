@@ -61,11 +61,14 @@ public class PhotoSelectAdapter extends RecyclerView.Adapter<PhotoSelectAdapter.
             PhotoSelectLoader.getImageLoaderListener().load(context, holder.imgLocal, imageItem.getImagePath());
         }
         if (imageLocalItemOnclickListener != null) {
-            holder.itemView.setOnClickListener((v) -> {
-                if (null == imageItem) {
-                    imageLocalItemOnclickListener.onItemCameraClick();
-                } else {
-                    imageLocalItemOnclickListener.onItemClick(v, position);
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (null == imageItem) {
+                        imageLocalItemOnclickListener.onItemCameraClick();
+                    } else {
+                        imageLocalItemOnclickListener.onItemClick(v, position);
+                    }
                 }
             });
         }
