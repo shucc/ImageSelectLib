@@ -18,12 +18,14 @@ import java.util.Map;
  */
 public class ImagesHelper {
 
+    private final String TAG = getClass().getName();
+
     private Context context;
     private ContentResolver cr;
 
-    private Map<String, String> thumbnailList = new HashMap<String, String>();
+    private Map<String, String> thumbnailList = new HashMap<>();
 
-    private Map<String, ImageBucket> bucketList = new HashMap<String, ImageBucket>();
+    private Map<String, ImageBucket> bucketList = new HashMap<>();
 
     private boolean hasBuildImagesBucketList = false;
 
@@ -35,8 +37,8 @@ public class ImagesHelper {
     }
 
     private void getThumbnail() {
-        String[] projection = { Thumbnails._ID, Thumbnails.IMAGE_ID,
-                Thumbnails.DATA };
+        String[] projection = {Thumbnails._ID, Thumbnails.IMAGE_ID,
+                Thumbnails.DATA};
         Cursor cursor = cr.query(Thumbnails.EXTERNAL_CONTENT_URI, projection,
                 null, null, null);
         getThumbnailColumnData(cursor);
@@ -50,7 +52,6 @@ public class ImagesHelper {
             int _idColumn = cur.getColumnIndex(Thumbnails._ID);
             int image_idColumn = cur.getColumnIndex(Thumbnails.IMAGE_ID);
             int dataColumn = cur.getColumnIndex(Thumbnails.DATA);
-
             do {
                 // Get the field values
                 _id = cur.getInt(_idColumn);
@@ -64,11 +65,11 @@ public class ImagesHelper {
 
     private void buildImagesBucketList() {
         getThumbnail();
-        String columns[] = new String[] { Media._ID, Media.BUCKET_ID,
+        String columns[] = new String[]{Media._ID, Media.BUCKET_ID,
                 Media.PICASA_ID, Media.DATA, Media.DISPLAY_NAME, Media.TITLE,
-                Media.SIZE, Media.BUCKET_DISPLAY_NAME };
+                Media.SIZE, Media.BUCKET_DISPLAY_NAME, Media.DATE_TAKEN};
         Cursor cur = cr.query(Media.EXTERNAL_CONTENT_URI, columns, null, null,
-                null);
+                Media.DATE_TAKEN + " DESC");
         if (cur.moveToFirst()) {
             int photoIDIndex = cur.getColumnIndexOrThrow(Media._ID);
             int photoPathIndex = cur.getColumnIndexOrThrow(Media.DATA);
@@ -80,7 +81,7 @@ public class ImagesHelper {
             int bucketIdIndex = cur.getColumnIndexOrThrow(Media.BUCKET_ID);
             int picasaIdIndex = cur.getColumnIndexOrThrow(Media.PICASA_ID);
             int totalNum = cur.getCount();
-
+            int dateTakenIndex = cur.getColumnIndex(Media.DATE_TAKEN);
             do {
                 String _id = cur.getString(photoIDIndex);
                 String name = cur.getString(photoNameIndex);
@@ -90,7 +91,7 @@ public class ImagesHelper {
                 String bucketName = cur.getString(bucketDisplayNameIndex);
                 String bucketId = cur.getString(bucketIdIndex);
                 String picasaId = cur.getString(picasaIdIndex);
-
+                String date = cur.getString(dateTakenIndex);
                 ImageBucket bucket = bucketList.get(bucketId);
                 if (bucket == null) {
                     bucket = new ImageBucket();
