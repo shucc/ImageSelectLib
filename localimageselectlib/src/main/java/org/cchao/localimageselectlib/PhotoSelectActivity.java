@@ -37,11 +37,11 @@ public class PhotoSelectActivity extends AppCompatActivity {
     public static final String KEY_LOCAL_IMAGE_SELECT = "key_local_image_select";
 
     private static final int RC_LOCAL_IMAGE_PERM = 100;
-    private final int TAKE_PHOTO = 200;
+    private final int TAKE_PHOTO = 101;
 
     private static final String KEY_IMAGE_MAX_SIZE = "key_image_max_size";
     private static final String KEY_RESULT_CODE = "key_result_code";
-    private static final String KEY_NEED_CAMERA = "keed_need_camera";
+    private static final String KEY_NEED_CAMERA = "key_need_camera";
 
     private RecyclerView recyclerView;
     private Button btnComplete;
@@ -108,7 +108,7 @@ public class PhotoSelectActivity extends AppCompatActivity {
         imageResultCode = getIntent().getIntExtra(KEY_RESULT_CODE, 100);
         imageLocal = new ArrayList<>();
 
-        textDefault.setText("/".concat(String.valueOf(selectMaxSize).concat("张")));
+        textDefault.setText(String.format(getString(R.string.activity_local_image_select_max_size), selectMaxSize));
         textNumber.setText(String.valueOf(selectCount));
 
         btnComplete.setOnClickListener(new View.OnClickListener() {
@@ -127,47 +127,46 @@ public class PhotoSelectActivity extends AppCompatActivity {
     }
 
     private void showData() {
-        if (imageAdapter == null) {
-            GridLayoutManager gridLayouManager = new GridLayoutManager(PhotoSelectActivity.this, 3);
-            gridLayouManager.setOrientation(GridLayoutManager.VERTICAL);
-            recyclerView.setLayoutManager(gridLayouManager);
-            recyclerView.addItemDecoration(new ItemDecorationAlbumColumns(10, 3));
-            imageAdapter = new PhotoSelectAdapter(imageLocal);
-            recyclerView.setAdapter(imageAdapter);
-            imageAdapter.setImageLocalItemOnclickListener(new PhotoSelectAdapter.ImageLocalItemOnclickListener() {
-                @Override
-                public void onItemClick(View view, int position) {
-                    ImageItem imageItem = imageLocal.get(position);
-                    if (imageItem.isSelect()) {
-                        selectCount--;
-                    } else {
-                        if (selectCount >= selectMaxSize) {
-                            Toast.makeText(PhotoSelectActivity.this, String.format(getString(R.string.activity_local_image_select_image_enough)
-                                    , selectMaxSize), Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        selectCount++;
-                    }
-                    imageItem.setSelect(!imageItem.isSelect());
-                    imageLocal.set(position, imageItem);
-                    imageAdapter.notifyItemChanged(position);
-                    textNumber.setText(String.valueOf(selectCount));
-                }
-
-                @Override
-                public void onItemCameraClick() {
+        if (null != imageAdapter) {
+            imageAdapter.notifyDataSetChanged();
+            return;
+        }
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(PhotoSelectActivity.this, 3);
+        gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(gridLayoutManager);
+        recyclerView.addItemDecoration(new ItemDecorationAlbumColumns(10, 3));
+        imageAdapter = new PhotoSelectAdapter(imageLocal);
+        recyclerView.setAdapter(imageAdapter);
+        imageAdapter.setImageLocalItemOnclickListener(new PhotoSelectAdapter.ImageLocalItemOnclickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                ImageItem imageItem = imageLocal.get(position);
+                if (imageItem.isSelect()) {
+                    selectCount--;
+                } else {
                     if (selectCount >= selectMaxSize) {
                         Toast.makeText(PhotoSelectActivity.this, String.format(getString(R.string.activity_local_image_select_image_enough)
                                 , selectMaxSize), Toast.LENGTH_SHORT).show();
                         return;
-                    } else {
-                        openCamera();
                     }
+                    selectCount++;
                 }
-            });
-        } else {
-            imageAdapter.notifyDataSetChanged();
-        }
+                imageItem.setSelect(!imageItem.isSelect());
+                imageLocal.set(position, imageItem);
+                imageAdapter.notifyItemChanged(position);
+                textNumber.setText(String.valueOf(selectCount));
+            }
+
+            @Override
+            public void onItemCameraClick() {
+                if (selectCount >= selectMaxSize) {
+                    Toast.makeText(PhotoSelectActivity.this, String.format(getString(R.string.activity_local_image_select_image_enough)
+                            , selectMaxSize), Toast.LENGTH_SHORT).show();
+                } else {
+                    openCamera();
+                }
+            }
+        });
     }
 
     private void openCamera() {
@@ -175,7 +174,7 @@ public class PhotoSelectActivity extends AppCompatActivity {
         if (intent.resolveActivity(getPackageManager()) != null) {
             cameraFile = FileUtil.createTempFile(this);
             if (cameraFile != null) {
-                Uri uri = null;
+                Uri uri;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     uri = FileProvider.getUriForFile(this, PhotoSelectLoader.getFileProviderName(), cameraFile);
                     intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -236,7 +235,7 @@ public class PhotoSelectActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<ImageItem> imageItems) {
-            textMaxSize.setText(String.format(getResources().getString(R.string.activity_local_image_select_local_max_size), imageItems.size()));
+            textMaxSize.setText(String.format(getResources().getString(R.string.activity_local_image_select_all_size), imageItems.size()));
             showData();
         }
 

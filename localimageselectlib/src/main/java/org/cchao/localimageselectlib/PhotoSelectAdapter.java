@@ -36,8 +36,22 @@ public class PhotoSelectAdapter extends RecyclerView.Adapter<PhotoSelectAdapter.
     @Override
     public LocalImageHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         context = parent.getContext();
-        return new LocalImageHolder(LayoutInflater.from(context)
-                .inflate(R.layout.item_local_image, parent, false));
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_local_image, parent, false);
+        final LocalImageHolder localImageHolder = new LocalImageHolder(view);
+        if (null != imageLocalItemOnclickListener) {
+            localImageHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ImageItem imageItem = imageItems.get(localImageHolder.getAdapterPosition());
+                    if (null == imageItem) {
+                        imageLocalItemOnclickListener.onItemCameraClick();
+                    } else {
+                        imageLocalItemOnclickListener.onItemClick(view, localImageHolder.getAdapterPosition());
+                    }
+                }
+            });
+        }
+        return localImageHolder;
     }
 
     @Override
@@ -59,18 +73,6 @@ public class PhotoSelectAdapter extends RecyclerView.Adapter<PhotoSelectAdapter.
                 holder.imgLocal.setColorFilter(null);
             }
             PhotoSelectLoader.getImageLoaderListener().load(context, holder.imgLocal, imageItem.getImagePath());
-        }
-        if (imageLocalItemOnclickListener != null) {
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (null == imageItem) {
-                        imageLocalItemOnclickListener.onItemCameraClick();
-                    } else {
-                        imageLocalItemOnclickListener.onItemClick(v, position);
-                    }
-                }
-            });
         }
     }
 

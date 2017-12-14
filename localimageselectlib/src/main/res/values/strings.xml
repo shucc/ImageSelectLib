@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">PhotoSelectLib</string>
     <string name="activity_local_image_select_complete">完成</string>
-    <string name="activity_local_image_select_local_max_size">所有图片 %d张</string>
+    <string name="activity_local_image_select_all_size">所有图片 %d张</string>
     <string name="activity_local_image_select_image_enough">您最多选取%d张图片</string>
+    <string name="activity_local_image_select_max_size">/%d张</string>
 </resources>

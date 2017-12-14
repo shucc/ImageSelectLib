@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/img_local"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        app:srcCompat="@drawable/ic_photo_select_placeholder"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/ic_photo_select_placeholder" />
 
     <ImageView
         android:id="@+id/img_camera"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:padding="16dp"
-        app:srcCompat="@drawable/ic_photo_select_camera"/>
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_photo_select_camera" />
 
     <ImageView
         android:id="@+id/img_select"
@@ -25,6 +25,6 @@
         android:layout_height="30dp"
         android:layout_alignParentRight="true"
         android:layout_margin="4dp"
-        app:srcCompat="@drawable/ic_photo_select_selected"/>
+        app:srcCompat="@drawable/ic_photo_select_selected" />
 
 </RelativeLayout>
