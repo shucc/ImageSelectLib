@@ -93,11 +93,11 @@ public class PhotoSelectActivity extends AppCompatActivity {
             throw new NullPointerException("ImageLoader is null!");
         }
 
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        btnComplete = (Button) findViewById(R.id.btn_complete);
-        textMaxSize = (TextView) findViewById(R.id.text_max_image_size);
-        textNumber = (TextView) findViewById(R.id.text_number);
-        textDefault = (TextView) findViewById(R.id.text_default);
+        recyclerView = findViewById(R.id.recyclerView);
+        btnComplete = findViewById(R.id.btn_complete);
+        textMaxSize = findViewById(R.id.text_max_image_size);
+        textNumber = findViewById(R.id.text_number);
+        textDefault = findViewById(R.id.text_default);
 
         initData();
     }

@@ -10,8 +10,8 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
-import org.cchao.localimageselectlib.PhotoSelectLoader;
 import org.cchao.localimageselectlib.PhotoSelectActivity;
+import org.cchao.localimageselectlib.PhotoSelectLoader;
 
 import java.io.File;
 import java.util.List;

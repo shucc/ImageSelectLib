@@ -92,9 +92,9 @@ public class PhotoSelectAdapter extends RecyclerView.Adapter<PhotoSelectAdapter.
 
         public LocalImageHolder(View itemView) {
             super(itemView);
-            imgLocal = (ImageView) itemView.findViewById(R.id.img_local);
-            imgSelect = (ImageView) itemView.findViewById(R.id.img_select);
-            imgCamera = (ImageView) itemView.findViewById(R.id.img_camera);
+            imgLocal = itemView.findViewById(R.id.img_local);
+            imgSelect = itemView.findViewById(R.id.img_select);
+            imgCamera = itemView.findViewById(R.id.img_camera);
         }
     }
 
