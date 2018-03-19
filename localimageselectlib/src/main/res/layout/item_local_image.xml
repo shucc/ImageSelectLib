@@ -12,14 +12,6 @@
         app:srcCompat="@drawable/ic_photo_select_placeholder" />
 
     <ImageView
-        android:id="@+id/img_camera"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:padding="16dp"
-        android:visibility="gone"
-        app:srcCompat="@drawable/ic_photo_select_camera" />
-
-    <ImageView
         android:id="@+id/img_select"
         android:layout_width="30dp"
         android:layout_height="30dp"

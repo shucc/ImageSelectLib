@@ -41,13 +41,6 @@ public class MainActivity extends AppCompatActivity {
                 PhotoSelectActivity.launch(MainActivity.this, 3, 300);
             }
         });
-
-        findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PhotoSelectActivity.launch(MainActivity.this, 4, 300, true);
-            }
-        });
     }
 
     @Override

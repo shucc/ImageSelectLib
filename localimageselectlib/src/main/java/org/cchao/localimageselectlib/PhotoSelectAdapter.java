@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import org.cchao.localimageselectlib.helper.ImageItem;
 
@@ -18,16 +19,20 @@ import java.util.List;
  */
 public class PhotoSelectAdapter extends RecyclerView.Adapter<PhotoSelectAdapter.LocalImageHolder> {
 
-    private final int SELECTED_COLOR_FILTER = 0x77000000;
-
     private List<ImageItem> imageItems;
+
+    private int maxSize;
+
+    //当前已选中图片数目
+    private int selectCount = 0;
 
     private Context context;
 
     private ImageLocalItemOnclickListener imageLocalItemOnclickListener;
 
-    PhotoSelectAdapter(List<ImageItem> imageItems) {
+    PhotoSelectAdapter(List<ImageItem> imageItems, int maxSize) {
         this.imageItems = imageItems;
+        this.maxSize = maxSize;
     }
 
     void setImageLocalItemOnclickListener(ImageLocalItemOnclickListener imageLocalItemOnclickListener) {
@@ -38,42 +43,47 @@ public class PhotoSelectAdapter extends RecyclerView.Adapter<PhotoSelectAdapter.
     public LocalImageHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_local_image, parent, false);
-        final LocalImageHolder localImageHolder = new LocalImageHolder(view);
+        final LocalImageHolder holder = new LocalImageHolder(view);
         if (null != imageLocalItemOnclickListener) {
-            localImageHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ImageItem imageItem = imageItems.get(localImageHolder.getAdapterPosition());
-                    if (null == imageItem) {
-                        imageLocalItemOnclickListener.onItemCameraClick();
+                    int position = holder.getAdapterPosition();
+                    ImageItem imageItem = imageItems.get(position);
+                    if (imageItem.isSelect()) {
+                        selectCount--;
                     } else {
-                        imageLocalItemOnclickListener.onItemClick(view, localImageHolder.getAdapterPosition());
+                        if (selectCount >= maxSize) {
+                            Toast.makeText(context, String.format(context.getString(R.string.activity_local_image_select_image_enough)
+                                    , maxSize), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        selectCount++;
                     }
+                    imageItem.setSelect(!imageItem.isSelect());
+                    changeSelect(holder, imageItem.isSelect());
+                    imageItems.set(position, imageItem);
+                    imageLocalItemOnclickListener.onItemClick(view, position);
                 }
             });
         }
-        return localImageHolder;
+        return holder;
     }
 
     @Override
     public void onBindViewHolder(LocalImageHolder holder, final int position) {
         final ImageItem imageItem = imageItems.get(position);
-        if (null == imageItem) {
-            holder.imgLocal.setVisibility(View.GONE);
-            holder.imgSelect.setVisibility(View.GONE);
-            holder.imgCamera.setVisibility(View.VISIBLE);
+        changeSelect(holder, imageItem.isSelect());
+        PhotoSelectLoader.getImageLoaderListener().load(context, holder.imgLocal, imageItem.getImagePath());
+    }
+
+    private void changeSelect(LocalImageHolder holder, boolean isSelected) {
+        if (isSelected) {
+            holder.imgSelect.setImageResource(R.drawable.ic_photo_select_selected);
+            holder.imgLocal.setColorFilter(0x77000000);
         } else {
-            holder.imgLocal.setVisibility(View.VISIBLE);
-            holder.imgSelect.setVisibility(View.VISIBLE);
-            holder.imgCamera.setVisibility(View.GONE);
-            if (imageItem.isSelect()) {
-                holder.imgSelect.setImageResource(R.drawable.ic_photo_select_selected);
-                holder.imgLocal.setColorFilter(SELECTED_COLOR_FILTER);
-            } else {
-                holder.imgSelect.setImageResource(R.drawable.ic_photo_select_unselected);
-                holder.imgLocal.setColorFilter(null);
-            }
-            PhotoSelectLoader.getImageLoaderListener().load(context, holder.imgLocal, imageItem.getImagePath());
+            holder.imgSelect.setImageResource(R.drawable.ic_photo_select_unselected);
+            holder.imgLocal.setColorFilter(null);
         }
     }
 
@@ -85,25 +95,25 @@ public class PhotoSelectAdapter extends RecyclerView.Adapter<PhotoSelectAdapter.
         return imageItems.size();
     }
 
+    public int getSelectCount() {
+        return selectCount;
+    }
+
     class LocalImageHolder extends RecyclerView.ViewHolder {
 
         ImageView imgLocal;
 
         ImageView imgSelect;
 
-        ImageView imgCamera;
-
         LocalImageHolder(View itemView) {
             super(itemView);
             imgLocal = itemView.findViewById(R.id.img_local);
             imgSelect = itemView.findViewById(R.id.img_select);
-            imgCamera = itemView.findViewById(R.id.img_camera);
         }
     }
 
     public interface ImageLocalItemOnclickListener {
-        void onItemClick(View view, int position);
 
-        void onItemCameraClick();
+        void onItemClick(View view, int position);
     }
 }
