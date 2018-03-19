@@ -7,8 +7,11 @@ package org.cchao.localimageselectlib.helper;
 public class ImageItem {
 
     private String id;
+
     private String orientation;
+
     private String imagePath;
+
     private String thumnbailPath;
 
     private boolean select = false;

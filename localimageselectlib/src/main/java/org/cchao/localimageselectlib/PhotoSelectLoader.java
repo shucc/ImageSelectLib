@@ -16,8 +16,8 @@ public class PhotoSelectLoader {
 
     private static String imageFolderName;
 
-    public static void init(@NonNull LocalImageLoaderListener listener
-            , @NonNull String fileProvider, @NonNull String imageFolder) {
+    public static void init(@NonNull LocalImageLoaderListener listener, @NonNull String fileProvider
+            , @NonNull String imageFolder) {
         imageLoaderListener = listener;
         fileProviderName = fileProvider;
         imageFolderName = imageFolder;

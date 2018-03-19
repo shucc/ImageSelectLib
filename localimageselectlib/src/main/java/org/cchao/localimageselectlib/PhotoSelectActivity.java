@@ -32,8 +32,6 @@ import java.util.List;
  */
 public class PhotoSelectActivity extends AppCompatActivity {
 
-    private final String TAG = getClass().getName();
-
     public static final String KEY_LOCAL_IMAGE_SELECT = "key_local_image_select";
 
     private static final int RC_LOCAL_IMAGE_PERM = 100;
@@ -69,10 +67,7 @@ public class PhotoSelectActivity extends AppCompatActivity {
     private FindLocalPhotosTask findLocalPhotosTask;
 
     public static void launch(Activity activity, int maxSize, int resultCode) {
-        Intent starter = new Intent(activity, PhotoSelectActivity.class);
-        starter.putExtra(KEY_IMAGE_MAX_SIZE, maxSize);
-        starter.putExtra(KEY_RESULT_CODE, resultCode);
-        activity.startActivityForResult(starter, 300);
+        launch(activity, maxSize, resultCode, false);
     }
 
     public static void launch(Activity activity, int maxSize, int resultCode, boolean needCamera) {

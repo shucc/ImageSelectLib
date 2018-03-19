@@ -1,6 +1,7 @@
 package org.cchao.localimageselectlib;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +18,7 @@ import java.util.List;
  */
 public class PhotoSelectAdapter extends RecyclerView.Adapter<PhotoSelectAdapter.LocalImageHolder> {
 
-    private final int SELECED_COLOR_FILTER = 0x77000000;
+    private final int SELECTED_COLOR_FILTER = 0x77000000;
 
     private List<ImageItem> imageItems;
 
@@ -25,16 +26,16 @@ public class PhotoSelectAdapter extends RecyclerView.Adapter<PhotoSelectAdapter.
 
     private ImageLocalItemOnclickListener imageLocalItemOnclickListener;
 
-    public PhotoSelectAdapter(List<ImageItem> imageItems) {
+    PhotoSelectAdapter(List<ImageItem> imageItems) {
         this.imageItems = imageItems;
     }
 
-    public void setImageLocalItemOnclickListener(ImageLocalItemOnclickListener imageLocalItemOnclickListener) {
+    void setImageLocalItemOnclickListener(ImageLocalItemOnclickListener imageLocalItemOnclickListener) {
         this.imageLocalItemOnclickListener = imageLocalItemOnclickListener;
     }
 
     @Override
-    public LocalImageHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public LocalImageHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_local_image, parent, false);
         final LocalImageHolder localImageHolder = new LocalImageHolder(view);
@@ -67,7 +68,7 @@ public class PhotoSelectAdapter extends RecyclerView.Adapter<PhotoSelectAdapter.
             holder.imgCamera.setVisibility(View.GONE);
             if (imageItem.isSelect()) {
                 holder.imgSelect.setImageResource(R.drawable.ic_photo_select_selected);
-                holder.imgLocal.setColorFilter(SELECED_COLOR_FILTER);
+                holder.imgLocal.setColorFilter(SELECTED_COLOR_FILTER);
             } else {
                 holder.imgSelect.setImageResource(R.drawable.ic_photo_select_unselected);
                 holder.imgLocal.setColorFilter(null);
@@ -84,7 +85,7 @@ public class PhotoSelectAdapter extends RecyclerView.Adapter<PhotoSelectAdapter.
         return imageItems.size();
     }
 
-    protected class LocalImageHolder extends RecyclerView.ViewHolder {
+    class LocalImageHolder extends RecyclerView.ViewHolder {
 
         ImageView imgLocal;
 
@@ -92,7 +93,7 @@ public class PhotoSelectAdapter extends RecyclerView.Adapter<PhotoSelectAdapter.
 
         ImageView imgCamera;
 
-        public LocalImageHolder(View itemView) {
+        LocalImageHolder(View itemView) {
             super(itemView);
             imgLocal = itemView.findViewById(R.id.img_local);
             imgSelect = itemView.findViewById(R.id.img_select);

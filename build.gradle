@@ -13,6 +13,7 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        maven { url 'https://jitpack.io' }
         google()
     }
 }
@@ -27,5 +28,5 @@ ext {
     minSdk = 16
     targetSdk = 22
     //App dependencies
-    supportLibraryVersion = '27.0.2'
+    supportLibraryVersion = '27.1.0'
 }

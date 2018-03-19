@@ -46,19 +46,14 @@ public class ImagesHelper {
 
     private void getThumbnailColumnData(Cursor cur) {
         if (cur.moveToFirst()) {
-            int _id;
-            int image_id;
-            String image_path;
-            int _idColumn = cur.getColumnIndex(Thumbnails._ID);
-            int image_idColumn = cur.getColumnIndex(Thumbnails.IMAGE_ID);
+            int imageID;
+            String imagePath;
+            int imageIdColumn = cur.getColumnIndex(Thumbnails.IMAGE_ID);
             int dataColumn = cur.getColumnIndex(Thumbnails.DATA);
             do {
-                // Get the field values
-                _id = cur.getInt(_idColumn);
-                image_id = cur.getInt(image_idColumn);
-                image_path = cur.getString(dataColumn);
-
-                thumbnailList.put("" + image_id, image_path);
+                imageID = cur.getInt(imageIdColumn);
+                imagePath = cur.getString(dataColumn);
+                thumbnailList.put("" + imageID, imagePath);
             } while (cur.moveToNext());
         }
     }
@@ -73,25 +68,14 @@ public class ImagesHelper {
         if (cur.moveToFirst()) {
             int photoIDIndex = cur.getColumnIndexOrThrow(Media._ID);
             int photoPathIndex = cur.getColumnIndexOrThrow(Media.DATA);
-            int photoNameIndex = cur.getColumnIndexOrThrow(Media.DISPLAY_NAME);
-            int photoTitleIndex = cur.getColumnIndexOrThrow(Media.TITLE);
-            int photoSizeIndex = cur.getColumnIndexOrThrow(Media.SIZE);
             int bucketDisplayNameIndex = cur
                     .getColumnIndexOrThrow(Media.BUCKET_DISPLAY_NAME);
             int bucketIdIndex = cur.getColumnIndexOrThrow(Media.BUCKET_ID);
-            int picasaIdIndex = cur.getColumnIndexOrThrow(Media.PICASA_ID);
-            int totalNum = cur.getCount();
-            int dateTakenIndex = cur.getColumnIndex(Media.DATE_TAKEN);
             do {
-                String _id = cur.getString(photoIDIndex);
-                String name = cur.getString(photoNameIndex);
+                String id = cur.getString(photoIDIndex);
                 String path = cur.getString(photoPathIndex);
-                String title = cur.getString(photoTitleIndex);
-                String size = cur.getString(photoSizeIndex);
                 String bucketName = cur.getString(bucketDisplayNameIndex);
                 String bucketId = cur.getString(bucketIdIndex);
-                String picasaId = cur.getString(picasaIdIndex);
-                String date = cur.getString(dateTakenIndex);
                 ImageBucket bucket = bucketList.get(bucketId);
                 if (bucket == null) {
                     bucket = new ImageBucket();
@@ -101,9 +85,9 @@ public class ImagesHelper {
                 }
                 bucket.count++;
                 ImageItem imageItem = new ImageItem();
-                imageItem.setId(_id);
+                imageItem.setId(id);
                 imageItem.setImagePath(path);
-                imageItem.setThumnbailPath(thumbnailList.get(_id));
+                imageItem.setThumnbailPath(thumbnailList.get(id));
                 bucket.imageList.add(imageItem);
 
             } while (cur.moveToNext());
