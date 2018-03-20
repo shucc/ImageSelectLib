@@ -2,20 +2,38 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/rv_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="48dp"
         android:background="#ffffff" />
 
     <View
+        android:id="@+id/view_bucket"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="#77000000" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_bucket"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/view_bucket"
+        android:paddingTop="8dp"
+        android:paddingBottom="48dp"
+        android:background="#ffffff" />
+
+    <View
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_alignParentBottom="true"
-        android:background="#e0000000" />
+        android:background="@android:color/black" />
 
     <Button
         android:id="@+id/btn_complete"
@@ -29,7 +47,7 @@
         android:textSize="20sp" />
 
     <TextView
-        android:id="@+id/text_default"
+        android:id="@+id/text_max_count"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:layout_alignParentBottom="true"
@@ -40,24 +58,33 @@
         android:textSize="16sp" />
 
     <TextView
-        android:id="@+id/text_number"
+        android:id="@+id/text_now_count"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/text_default"
+        android:layout_toLeftOf="@+id/text_max_count"
         android:gravity="center"
         android:textColor="@android:color/white"
         android:textSize="16sp"
         tools:text="0" />
 
     <TextView
-        android:id="@+id/text_max_image_size"
+        android:id="@+id/text_bucket"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="8dp"
         android:gravity="center"
         android:textColor="@android:color/white"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        tools:text="全部图片"/>
+
+    <ImageView
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/text_bucket"
+        android:layout_marginBottom="14dp"
+        app:srcCompat="@drawable/ic_photo_select_indicator"/>
 
 </RelativeLayout>

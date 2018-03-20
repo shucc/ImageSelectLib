@@ -1,5 +1,6 @@
 package org.cchao.localimageselectlib.helper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,9 +9,50 @@ import java.util.List;
  */
 public class ImageBucket {
 
-    public int count = 0;
+    private int count = 0;
 
-    public String bucketName;
+    private String bucketName;
 
-    public List<ImageItem> imageList;
+    private List<ImageItem> imageList;
+
+    private boolean select = false;
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public String getBucketName() {
+        return bucketName;
+    }
+
+    public void setBucketName(String bucketName) {
+        this.bucketName = bucketName;
+    }
+
+    public List<ImageItem> getImageList() {
+        return imageList;
+    }
+
+    public void setImageList(List<ImageItem> imageList) {
+        this.imageList = imageList;
+    }
+
+    public void setSelect(boolean select) {
+        this.select = select;
+    }
+
+    public boolean isSelect() {
+        return select;
+    }
+
+    public void addItem(ImageItem imageItem) {
+        if (null == imageList) {
+            imageList = new ArrayList<>();
+        }
+        imageList.add(imageItem);
+    }
 }

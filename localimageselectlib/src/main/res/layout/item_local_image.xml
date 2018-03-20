@@ -8,8 +8,7 @@
         android:id="@+id/img_local"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:scaleType="centerCrop"
-        app:srcCompat="@drawable/ic_photo_select_placeholder" />
+        android:scaleType="centerCrop" />
 
     <ImageView
         android:id="@+id/img_select"

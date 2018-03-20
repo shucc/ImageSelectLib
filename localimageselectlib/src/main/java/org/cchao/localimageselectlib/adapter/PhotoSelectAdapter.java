@@ -1,4 +1,4 @@
-package org.cchao.localimageselectlib;
+package org.cchao.localimageselectlib.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -7,9 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import org.cchao.localimageselectlib.PhotoSelectLoader;
+import org.cchao.localimageselectlib.R;
 import org.cchao.localimageselectlib.helper.ImageItem;
+import org.cchao.localimageselectlib.listener.OnItemClickListener;
+import org.cchao.localimageselectlib.utils.ScreenUtils;
 
 import java.util.List;
 
@@ -19,7 +24,7 @@ import java.util.List;
  */
 public class PhotoSelectAdapter extends RecyclerView.Adapter<PhotoSelectAdapter.LocalImageHolder> {
 
-    private List<ImageItem> imageItems;
+    private List<ImageItem> data;
 
     private int maxSize;
 
@@ -28,15 +33,15 @@ public class PhotoSelectAdapter extends RecyclerView.Adapter<PhotoSelectAdapter.
 
     private Context context;
 
-    private ImageLocalItemOnclickListener imageLocalItemOnclickListener;
+    private OnItemClickListener onItemClickListener;
 
-    PhotoSelectAdapter(List<ImageItem> imageItems, int maxSize) {
-        this.imageItems = imageItems;
+    public PhotoSelectAdapter(List<ImageItem> data, int maxSize) {
+        this.data = data;
         this.maxSize = maxSize;
     }
 
-    void setImageLocalItemOnclickListener(ImageLocalItemOnclickListener imageLocalItemOnclickListener) {
-        this.imageLocalItemOnclickListener = imageLocalItemOnclickListener;
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
     }
 
     @Override
@@ -44,12 +49,16 @@ public class PhotoSelectAdapter extends RecyclerView.Adapter<PhotoSelectAdapter.
         context = parent.getContext();
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_local_image, parent, false);
         final LocalImageHolder holder = new LocalImageHolder(view);
-        if (null != imageLocalItemOnclickListener) {
+        int itemHeight = (ScreenUtils.width(context).px - 16) / 3;
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) holder.imgLocal.getLayoutParams();
+        params.height = itemHeight;
+        holder.imgLocal.setLayoutParams(params);
+        if (null != onItemClickListener) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     int position = holder.getAdapterPosition();
-                    ImageItem imageItem = imageItems.get(position);
+                    ImageItem imageItem = data.get(position);
                     if (imageItem.isSelect()) {
                         selectCount--;
                     } else {
@@ -62,8 +71,8 @@ public class PhotoSelectAdapter extends RecyclerView.Adapter<PhotoSelectAdapter.
                     }
                     imageItem.setSelect(!imageItem.isSelect());
                     changeSelect(holder, imageItem.isSelect());
-                    imageItems.set(position, imageItem);
-                    imageLocalItemOnclickListener.onItemClick(view, position);
+                    data.set(position, imageItem);
+                    onItemClickListener.onItemClick(view, position);
                 }
             });
         }
@@ -72,7 +81,7 @@ public class PhotoSelectAdapter extends RecyclerView.Adapter<PhotoSelectAdapter.
 
     @Override
     public void onBindViewHolder(LocalImageHolder holder, final int position) {
-        final ImageItem imageItem = imageItems.get(position);
+        final ImageItem imageItem = data.get(position);
         changeSelect(holder, imageItem.isSelect());
         PhotoSelectLoader.getImageLoaderListener().load(context, holder.imgLocal, imageItem.getImagePath());
     }
@@ -89,10 +98,10 @@ public class PhotoSelectAdapter extends RecyclerView.Adapter<PhotoSelectAdapter.
 
     @Override
     public int getItemCount() {
-        if (imageItems == null) {
+        if (data == null) {
             return 0;
         }
-        return imageItems.size();
+        return data.size();
     }
 
     public int getSelectCount() {
@@ -110,10 +119,5 @@ public class PhotoSelectAdapter extends RecyclerView.Adapter<PhotoSelectAdapter.
             imgLocal = itemView.findViewById(R.id.img_local);
             imgSelect = itemView.findViewById(R.id.img_select);
         }
-    }
-
-    public interface ImageLocalItemOnclickListener {
-
-        void onItemClick(View view, int position);
     }
 }

@@ -80,15 +80,14 @@ public class ImagesHelper {
                 if (bucket == null) {
                     bucket = new ImageBucket();
                     bucketList.put(bucketId, bucket);
-                    bucket.imageList = new ArrayList<>();
-                    bucket.bucketName = bucketName;
+                    bucket.setBucketName(bucketName);
                 }
-                bucket.count++;
+                bucket.setCount(bucket.getCount() + 1);
                 ImageItem imageItem = new ImageItem();
                 imageItem.setId(id);
                 imageItem.setImagePath(path);
                 imageItem.setThumnbailPath(thumbnailList.get(id));
-                bucket.imageList.add(imageItem);
+                bucket.addItem(imageItem);
 
             } while (cur.moveToNext());
         }

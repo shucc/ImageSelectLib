@@ -12,27 +12,12 @@ public class PhotoSelectLoader {
 
     private static LocalImageLoaderListener imageLoaderListener;
 
-    private static String fileProviderName;
-
-    private static String imageFolderName;
-
-    public static void init(@NonNull LocalImageLoaderListener listener, @NonNull String fileProvider
-            , @NonNull String imageFolder) {
+    public static void init(@NonNull LocalImageLoaderListener listener) {
         imageLoaderListener = listener;
-        fileProviderName = fileProvider;
-        imageFolderName = imageFolder;
     }
 
     public static LocalImageLoaderListener getImageLoaderListener() {
         return imageLoaderListener;
-    }
-
-    public static String getFileProviderName() {
-        return fileProviderName;
-    }
-
-    public static String getImageFolderName() {
-        return imageFolderName;
     }
 
     public interface LocalImageLoaderListener {
