@@ -1,8 +1,10 @@
 package org.cchao.localimageselect;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +20,10 @@ import org.cchao.localimageselectlib.PhotoSelectLoader;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import me.weyye.hipermission.HiPermission;
+import me.weyye.hipermission.PermissionCallback;
+import me.weyye.hipermission.PermissionItem;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,13 +54,13 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.button1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PhotoSelectActivity.launch(MainActivity.this, 3, 300);
+                openPhotoSelect(3);
             }
         });
         findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PhotoSelectActivity.launch(MainActivity.this, 9, 300);
+                openPhotoSelect(9);
             }
         });
     }
@@ -69,6 +75,37 @@ public class MainActivity extends AppCompatActivity {
         rvImage.setLayoutManager(gridLayoutManager);
         adapter = new PhotoAdapter(data);
         rvImage.setAdapter(adapter);
+    }
+
+    private void openPhotoSelect(final int maxSize) {
+        List<PermissionItem> permissionItems = new ArrayList<>();
+        permissionItems.add(new PermissionItem(Manifest.permission.WRITE_EXTERNAL_STORAGE, "存储空间", R.drawable.permission_ic_storage));
+        HiPermission.create(this)
+                .title("权限申请")
+                .permissions(permissionItems)
+                .filterColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimary, getTheme()))
+                .msg("为了您能正常使用选取图片功能，需要以下权限")
+                .checkMutiPermission(new PermissionCallback() {
+                    @Override
+                    public void onClose() {
+
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        PhotoSelectActivity.launch(MainActivity.this, maxSize, 300);
+                    }
+
+                    @Override
+                    public void onDeny(String permission, int position) {
+
+                    }
+
+                    @Override
+                    public void onGuarantee(String permission, int position) {
+
+                    }
+                });
     }
 
     @Override
