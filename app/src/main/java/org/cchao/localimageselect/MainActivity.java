@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
             public void load(Context context, ImageView imageView, String imageUrl) {
                 Glide.with(context)
                         .load(new File(imageUrl))
+                        .error(R.mipmap.ic_launcher)
+                        .placeholder(R.mipmap.ic_launcher)
                         .into(imageView);
             }
         });
